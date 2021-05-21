@@ -1,11 +1,16 @@
-const Classroom = require('../models').Classroom;
-const Student = require('../models').Student;
+const Classroom = require('../models/classroom')//.Classroom;
+const Student = require('../models/student')//.Student;
 
-module.exports = {
-  list(req, res) {
-    return Classroom
-      .findAll({
-        include: [{
+
+exports.list = function(req, res) {
+    Classroom.findAll(function(err, classroom) {
+         console.log('controller')
+         if (err)
+            res.send(err);
+         console.log('res', classroom);
+         res.send(classroom);
+}
+       /* include: [{
           model: Student,
           as: 'students'
         }],
@@ -15,12 +20,17 @@ module.exports = {
         ],
       })
       .then((classrooms) => res.status(200).send(classrooms))
-      .catch((error) => { res.status(400).send(error); });
-  },
+      .catch((error) => { res.status(400).send(error); }); */
+    );
+  };
 
-  getById(req, res) {
-    return Classroom
-      .findByPk(req.params.id, {
+  exports.getById = function(req, res) {
+    Classroom.findById(req.params.id, function(err, classroom)  {
+      if (err)
+        res.send(err);
+      res.json(classroom);
+    });/*{
+      if (err)
         include: [{
           model: Student,
           as: 'students'
@@ -37,19 +47,19 @@ module.exports = {
       .catch((error) => {
         console.log(error);
         res.status(400).send(error);
-      });
-  },
+      }); */
+  };
 
-  add(req, res) {
+  exports.add = function(req, res) {
     return Classroom
       .create({
         class_name: req.body.class_name,
       })
       .then((classroom) => res.status(201).send(classroom))
       .catch((error) => res.status(400).send(error));
-  },
+  };
 
-  addWithStudents(req, res) {
+  exports.addWithStudents = function(req, res) {
     return Classroom
       .create({
         class_name: req.body.class_name,
@@ -62,9 +72,9 @@ module.exports = {
       })
       .then((classroom) => res.status(201).send(classroom))
       .catch((error) => res.status(400).send(error));
-  },
+  };
 
-  update(req, res) {
+  exports.update = function(req, res) {
     return Classroom
       .findByPk(req.params.id, {
         include: [{
@@ -86,9 +96,9 @@ module.exports = {
           .catch((error) => res.status(400).send(error));
       })
       .catch((error) => res.status(400).send(error));
-  },
+  };
 
-  delete(req, res) {
+  exports.delete = function(req, res) {
     return Classroom
       .findByPk(req.params.id)
       .then(classroom => {
@@ -103,5 +113,4 @@ module.exports = {
           .catch((error) => res.status(400).send(error));
       })
       .catch((error) => res.status(400).send(error));
-  },
-};
+  };
